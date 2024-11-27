@@ -204,5 +204,73 @@ void printAdjMatrix(int adjMatrix[21][21]) { // prints the adjacency matrix
 }
 
 void findShortestPath(Node** nodeList, int adjMatrix[21][21]) { // finds the shortest path between two nodes using Dijkstra's Algorithm
-    // TODO: Write this 
+    char* name1 = new char[4];
+    char* name2 = new char[4];
+    cout << "What Is The Name of the Starting Node? (ie. A, B, AB, AC)" << endl;
+    cin.get(name1, 4);
+    cin.ignore(1, '\n');
+    cout << "What Is The Name of the Ending Node? (ie. A, B, AB, AC)" << endl;
+    cin.get(name2, 4);
+    cin.ignore(1, '\n');
+
+    int index1 = 398121;
+    int index2 = 398121;
+    for (int i = 0; i < 21; i++) { // finds the index of the two nodes
+        if (nodeList[i] != NULL) {
+            if (strcmp(nodeList[i]->name, name1) == 0) {
+                index1 = i;
+            }
+            else if (strcmp(nodeList[i]->name, name2) == 0) {
+                index2 = i;
+            }
+        }
+    }
+
+    if (index1 != 398121 && index2 != 398121) { // Dijkstra Algorithm
+        int dist[21];
+        bool visited[21];
+        int prev[21];
+        for (int i = 0; i < 21; i++) {
+            dist[i] = INT_MAX;
+            visited[i] = false;
+            prev[i] = -1;
+        }
+        dist[index1] = 0;
+
+        for (int i = 0; i < 21; i++) { // finds the shortest path
+            int min = INT_MAX;
+            int minIndex = -1;
+            for (int j = 0; j < 21; j++) { // finds the next node to visit
+                if (visited[j] == false && dist[j] <= min) {
+                    min = dist[j];
+                    minIndex = j;
+                }
+            }
+            visited[minIndex] = true;
+            for (int j = 0; j < 21; j++) { // updates the distance of the nodes
+                if (visited[j] == false && adjMatrix[minIndex][j] != 0 && dist[minIndex] != INT_MAX && dist[minIndex] + adjMatrix[minIndex][j] < dist[j]) {
+                    dist[j] = dist[minIndex] + adjMatrix[minIndex][j];
+                    prev[j] = minIndex;
+                }
+            }
+        }
+
+        cout << "The Shortest Path From " << name1 << " to " << name2 << " is: " << dist[index2] << endl;
+        cout << "The Path is: ";
+        int path[21];
+        int pathIndex = 0;
+        int curr = index2;
+        while (curr != -1) { // finds the path
+            path[pathIndex] = curr;
+            pathIndex++;
+            curr = prev[curr];
+        }
+        for (int i = pathIndex - 1; i >= 0; i--) { // prints the path
+            cout << nodeList[path[i]]->name << " ";
+        }
+        cout << endl;
+    }
+    else {
+        cout << "Sorry, Please Try Again" << endl;
+    }
 }
